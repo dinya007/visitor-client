@@ -1,4 +1,4 @@
-function initMap(loadPlaces, $scope) {
+function initMap($scope, places, finishCallback, focusFirstPlace) {
     var infoWindow = new google.maps.InfoWindow();
 
     if (navigator.geolocation) {
@@ -16,15 +16,12 @@ function initMap(loadPlaces, $scope) {
             $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
             $scope.markers = [];
 
-            loadPlaces(setPlaces);
+            $scope.updateMap(places);
+            finishCallback();
         });
     } else {
         alert("Geolocation is not supported by this browser.");
     }
-
-    var setPlaces = function (places) {
-        $scope.updateMap(places);
-    };
 
     $scope.updateMap = function (places) {
 
@@ -36,20 +33,21 @@ function initMap(loadPlaces, $scope) {
                 title: place.locationName
             });
 
+            var activeSalesCounter = 0;
             if (place.sales !== null) {
                 marker.content = '<ul class="list-group">';
                 var i = 0;
-                var j = 0;
-                while (i < place.sales.length && j < 3) {
+                while (i < place.sales.length && activeSalesCounter < 3) {
                     var sale = place.sales[i];
                     if (sale.active) {
-                        ++j;
+                        ++activeSalesCounter;
                         marker.content += '<li class="list-group-item">' + sale.description + '</li>'
                     }
                     ++i;
                 }
                 marker.content += '</ul>';
-            } else {
+            }
+            if (activeSalesCounter === 0) {
                 marker.content = '';
             }
 
@@ -74,7 +72,9 @@ function initMap(loadPlaces, $scope) {
         if (!$scope.currentPlace) {
             $scope.currentPlace = places[0];
         }
-        google.maps.event.trigger($scope.currentPlace.marker, 'click');
+        if (focusFirstPlace && $scope.currentPlace) {
+            google.maps.event.trigger($scope.currentPlace.marker, 'click');
+        }
     };
 
     $scope.openInfoWindow = function (e, place) {
