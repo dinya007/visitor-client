@@ -25,6 +25,10 @@ function initMap($scope, places, finishCallback, focusFirstPlace) {
 
     $scope.updateMap = function (places) {
 
+        for (var i = 0; i < $scope.markers.length; i++) {
+            $scope.markers[i].setMap(null);
+        }
+
         var createMarker = function (place) {
             var marker = new google.maps.Marker({
                 map: $scope.map,
@@ -33,35 +37,33 @@ function initMap($scope, places, finishCallback, focusFirstPlace) {
                 title: place.locationName
             });
 
-            var activeSalesCounter = 0;
             if (place.sales !== null) {
                 marker.content = '<ul class="list-group">';
                 var i = 0;
-                while (i < place.sales.length && activeSalesCounter < 3) {
+                while (i < place.sales.length) {
                     var sale = place.sales[i];
                     if (sale.active) {
-                        ++activeSalesCounter;
-                        marker.content += '<li class="list-group-item">' + sale.description + '</li>'
+                        marker.content += '<li class="list-group-item" style="width: 200px">' + sale.description + '</li>';
                     }
                     ++i;
                 }
                 marker.content += '</ul>';
             }
-            if (activeSalesCounter === 0) {
-                marker.content = '';
-            }
 
             google.maps.event.addListener(marker, 'click', function () {
                 var contentString = '<div class="info-window">' +
-                    '<h3 class="text-center">' + marker.title + '</h3>' +
+                    '<h3 class="text-center">' + marker.title + '' +
+                    '&nbsp;<span class="badge" style="cursor:pointer" data-toggle="modal" data-target="#start-visit-modal">Я иду!</span> </h3>' +
                     '<div class="info-content">' +
                     '<p>' + marker.content + '</p>' +
                     '</div>' +
                     '</div>';
                 infoWindow.setContent(contentString);
                 infoWindow.open($scope.map, marker);
+                $scope.setSelectedPlace(place);
             });
 
+            $scope.markers.push(marker);
             place.marker = marker;
         };
 

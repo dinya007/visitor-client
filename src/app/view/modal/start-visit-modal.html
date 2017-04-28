@@ -1,0 +1,48 @@
+<div class="modal fade" id="start-visit-modal" tabindex="-1" role="dialog" aria-labelledby="start-visit-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="start-visit-modal-label">Введите информацию необходимую для резервирования
+                    столика</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name">Ваше имя:</label>
+                    <input type="text" class="form-control" id="name" ng-model="$root.visitor.name"/>
+                </div>
+                <div class="form-group">
+                    <label for="name">Номер телефона:</label>
+                    <input type="text" class="form-control" id="phoneNumber" ng-model="$root.visitor.phoneNumber"/>
+                </div>
+                <div class="form-group">
+                    <label>Во сколько вы придете:</label>
+                    <datetimepicker
+                            hour-step="hourStep"
+                            minute-step="minuteStep"
+                            ng-model="visitTime"
+                            show-meridian="false"
+                            date-format="{{format}}"
+                            date-options="dateOptions"
+                            datepicker-append-to-body="false"
+                            show-spinners="true"
+                            date-opened="dateOpened"
+                            show-button-bar="false"
+                            min-date="minDate"
+                            max-date="maxDate"></datetimepicker>
+                </div>
+                <div class="form-group">
+                    <label for="visitorsAmount">На сколько людей Вам нужен столик:</label>
+                    <input type="text" class="form-control" id="visitorsAmount" ng-model="visitorsAmount"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        ng-click="startVisit(visitTime, visitorsAmount)">Я иду!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

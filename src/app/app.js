@@ -2,11 +2,12 @@ var app = angular.module('app', [
     'ngRoute',
     'ngCookies',
     'ngSanitize',
-    'xeditable'
+    'xeditable',
+    'ui.bootstrap',
+    'ui.bootstrap.datetimepicker'
 ]);
 
 app.config(['$routeProvider', function ($routeProvider) {
-
     $routeProvider
         .when('/', {
             controller: 'homeController',
@@ -15,23 +16,14 @@ app.config(['$routeProvider', function ($routeProvider) {
         .otherwise({redirectTo: '/'});
 }]);
 
-// app.run(['$rootScope', '$location', '$cookieStore', '$http', 'editableOptions', function ($rootScope, $location, $cookieStore, $http, editableOptions) {
-//     // keep user logged in after page refresh
-//     $rootScope.globals = $cookieStore.get('globals') || {};
-//     if ($rootScope.globals.currentUser) {
-//         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
-//     }
-//
-//     $rootScope.$on('$locationChangeStart', function (event, next, current) {
-//         // redirect to login page if not logged in
-//         if ($location.path() !== '/login' && !$rootScope.globals.currentUser) {
-//             $location.path('/login');
-//         }
-//     });
-//
-//     editableOptions.theme = 'bs3';
-// }]);
-//
-// app.config(['$httpProvider', function ($httpProvider) {
-//     $httpProvider.defaults.withCredentials = true;
-// }]);
+app.run(['$rootScope', '$cookies', 'visitorService', function ($rootScope, $cookies, visitorService) {
+    var restaurantUid = $cookies.get('restaurant_uid');
+    if (restaurantUid !== undefined) {
+        visitorService.get(restaurantUid).then(function (data) {
+            $rootScope.visitor = data.data;
+        });
+    } else {
+        $rootScope.visitor = {};
+    }
+}]);
+
